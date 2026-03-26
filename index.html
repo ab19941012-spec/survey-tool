@@ -1,3 +1,5 @@
+--- START OF FILE index.html ---
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -98,7 +100,7 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <div id="count-tag" class="h-12 w-12 rounded-2xl border-2 border-white/10 flex items-center justify-center text-white/30 font-black text-xs">0</div>
-                    <button id="dl-btn" class="bg-blue-600 text-white h-12 px-8 rounded-2xl font-black shadow-lg shadow-blue-600/30 active:scale-95 transition-all text-sm tracking-widest">【下載】</button>
+                    <i class="fa-solid fa-chevron-up text-white/20 text-xs"></i>
                 </div>
             </div>
             
@@ -110,7 +112,10 @@
 
                 <div id="basket-items" class="space-y-4 max-h-[30vh] overflow-y-auto no-scrollbar mb-8"></div>
                 
-                <button onclick="clearBasket()" class="w-full border-2 border-red-900/50 text-red-700 py-3 rounded-2xl font-bold text-xs tracking-widest uppercase active:bg-red-700 active:text-white transition-all">清空目前估價單內容</button>
+                <div class="space-y-3">
+                    <button id="dl-btn" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-blue-600/30 active:scale-95 transition-all text-sm tracking-[0.2em] uppercase">【 下載報表影像 】</button>
+                    <button onclick="clearBasket()" class="w-full border-2 border-red-900/30 text-red-700 py-3 rounded-2xl font-bold text-[10px] tracking-widest uppercase active:bg-red-700 active:text-white transition-all">清空目前估價單內容</button>
+                </div>
             </div>
         </div>
     </div>
@@ -165,13 +170,13 @@
         const LEGAL = "本單價表僅供參考，用為現勘第一時間初估工程預算之用，非工程預算書詳細價目表。單價含20%行政雜項與營業稅金。";
         const CATEGORIES = ["全部", "土石方工程", "基礎與大地工程", "排水與橋涵工程", "路面工程", "道路附屬及交通安全工程", "擋土牆工程", "邊坡保護工程"];
 
-        // --- 鐵律：錄入 PDF 5頁全部 151 個工項 ---
+        // --- 錄入 PDF 151 個工項 ---
         const DB = [
-          // 土石方工程 (2筆)
+          // 土石方工程
   {cat:"土石方工程", name:"機械清除坍方土石", price:350, unit:"m³"},
   {cat:"土石方工程", name:"人工清除坍方土石", price:800, unit:"m³"},
 
-  // 基礎與大地工程 (18筆)
+  // 基礎與大地工程
   {cat:"基礎與大地工程", name:"微型樁(直徑20cm)", price:7270, unit:"m"},
   {cat:"基礎與大地工程", name:"微型樁(直徑30cm)", price:8800, unit:"m"},
   {cat:"基礎與大地工程", name:"打設鋼軌樁(購置)", price:3260, unit:"m"},
@@ -191,7 +196,7 @@
   {cat:"基礎與大地工程", name:"40T 預力地錨", price:4200, unit:"m"},
   {cat:"基礎與大地工程", name:"60T 預力地貓", price:5500, unit:"m"},
 
-  // 排水與橋涵工程 (40筆)
+  // 排水與橋涵工程
   {cat:"排水與橋涵工程", name:"拍漿溝", price:2360, unit:"m"},
   {cat:"排水與橋涵工程", name:"L型溝", price:4440, unit:"m"},
   {cat:"排水與橋涵工程", name:"排水溝(H=0.6m)", price:6600, unit:"m"},
@@ -233,7 +238,7 @@
   {cat:"排水與橋涵工程", name:"T型梁橋", price:60000, unit:"m²"},
   {cat:"排水與橋涵工程", name:"預力梁橋", price:80000, unit:"m²"},
 
-  // 路面工程 (12筆)
+  // 路面工程
   {cat:"路面工程", name:"碎石級配(15cm)", price:250, unit:"m²"},
   {cat:"路面工程", name:"碎石級配(20cm)", price:330, unit:"m²"},
   {cat:"路面工程", name:"碎石級配(25cm)", price:410, unit:"m²"},
@@ -247,7 +252,7 @@
   {cat:"路面工程", name:"20cm 厚混凝土路面(加點焊鋼絲網)", price:1500, unit:"m²"},
   {cat:"路面工程", name:"5cm厚 AC 路面", price:800, unit:"m²"},
 
-  // 道路附屬及交通安全工程 (9筆)
+  // 道路附屬及交通安全工程
   {cat:"道路附屬及交通安全工程", name:"塊狀護欄", price:3210, unit:"座"},
   {cat:"道路附屬及交通安全工程", name:"紐澤西護欄", price:2420, unit:"m"},
   {cat:"道路附屬及交通安全工程", name:"紐澤西護欄(含基礎)", price:4170, unit:"m"},
@@ -258,7 +263,7 @@
   {cat:"道路附屬及交通安全工程", name:"W型鋼板護欄-G1、H3", price:5000, unit:"m"},
   {cat:"道路附屬及交通安全工程", name:"塊狀護欄-G1、H3", price:2000, unit:"個"},
 
-  // 擋土牆工程 (37筆)
+  // 擋土牆工程
   {cat:"擋土牆工程", name:"重力式擋土牆1M", price:16200, unit:"m"},
   {cat:"擋土牆工程", name:"重力式擋土牆 2M", price:30160, unit:"m"},
   {cat:"擋土牆工程", name:"重力式擋土牆 3M", price:40410, unit:"m"},
@@ -297,7 +302,7 @@
   {cat:"擋土牆工程", name:"加勁擋土牆(高度7m)", price:88000, unit:"m"},
   {cat:"擋土牆工程", name:"箱型石籠", price:4000, unit:"m"},
 
-  // 邊坡保護工程 (24筆)
+  // 邊坡保護工程
   {cat:"邊坡保護工程", name:"型框邊坡植生", price:3000, unit:"m²"},
   {cat:"邊坡保護工程", name:"邊坡掛網植生", price:2210, unit:"m²"},
   {cat:"邊坡保護工程", name:"噴凝土護坡(t=10cm)", price:2320, unit:"m²"},
@@ -347,14 +352,15 @@
             });
 
             document.getElementById('search').oninput = render;
-            document.getElementById('island-summary').onclick = () => document.getElementById('island-drawer').classList.toggle('hidden');
+            document.getElementById('island-summary').onclick = () => {
+                const drawer = document.getElementById('island-drawer');
+                drawer.classList.toggle('hidden');
+                document.querySelector('.fa-chevron-up').style.transform = drawer.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+            };
             
-            // 下載按鈕邏輯
             document.getElementById('dl-btn').onclick = async (e) => {
-                e.stopPropagation();
-                if(basket.length === 0) return;
+                if(basket.length === 0) { alert("清單為空，請先加入工項"); return; }
                 
-                // LINE 攔截
                 if (/Line/i.test(navigator.userAgent)) {
                     document.getElementById('line-alert').style.display = 'flex';
                     return;
@@ -416,7 +422,6 @@
             list.innerHTML = ''; rBody.innerHTML = '';
 
             basket.forEach((i, idx) => {
-                // UI 抽屜內容
                 const row = document.createElement('div');
                 row.className = 'flex justify-between items-center p-5 bg-white/5 rounded-[2.2rem] border border-white/5';
                 row.innerHTML = `
@@ -432,7 +437,6 @@
                 `;
                 list.appendChild(row);
 
-                // 報表行
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><div class="cat-tag">${i.cat}</div><br><b>${i.name}</b></td>
