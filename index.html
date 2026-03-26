@@ -2,139 +2,134 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>114年會勘估價參考</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>114年常用工程平均單價表</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* --- 網頁 UI: iPhone 17 Pro Obsidian --- */
-        body { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif; background: #000; color: #fff; margin: 0; }
+        body { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif; background: #000; color: #fff; margin: 0; padding-bottom: env(safe-area-inset-bottom); }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .dynamic-island { background: rgba(25, 25, 25, 0.98); backdrop-filter: blur(50px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 -10px 50px rgba(0,0,0,0.8); }
+        .island-container { position: fixed; bottom: calc(20px + env(safe-area-inset-bottom)); left: 15px; right: 15px; z-index: 100; }
+        .dynamic-island { background: rgba(25, 25, 27, 0.98); backdrop-filter: blur(50px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 2.8rem; box-shadow: 0 -15px 50px rgba(0,0,0,0.8); }
         .active-tab { background: #E63946 !important; color: #fff !important; font-weight: 800; transform: scale(1.05); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* 數量輸入優化 */
-        .qty-control { background: rgba(255,255,255,0.1); border-radius: 14px; padding: 4px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1); }
-        .qty-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: rgba(255,255,255,0.05); transition: 0.2s; }
-        .qty-btn:active { background: #E63946; }
-        .qty-input { background: transparent; width: 60px; text-align: center; font-size: 18px; font-weight: 900; color: #fff; border: none; outline: none; -moz-appearance: textfield; }
-        .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+        /* 手機輸入框優化 */
+        .qty-control { background: rgba(255,255,255,0.1); border-radius: 14px; padding: 4px; display: flex; align-items: center; }
+        .qty-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #aaa; }
+        .qty-btn:active { color: #fff; background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .qty-input { background: transparent; width: 65px; text-align: center; font-size: 18px; font-weight: 900; color: #fff; border: none; outline: none; }
 
-        /* --- 下載報表樣式 (隱藏) --- */
-        #download-area {
+        /* 下載報表樣式 */
+        #capture-area {
             background: #fff; color: #000; width: 850px; 
-            padding: 2cm; /* 上下左右留白 2 公分 */
+            padding: 2cm; /* 安全邊距 2公分 */
             position: absolute; left: -9999px; top: 0;
         }
-        .atayal-line { height: 10px; background-color: #E63946; background-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%, transparent); background-size: 16px 16px; margin: 10px 0; }
-        .report-header h1 { font-size: 24pt; color: #E63946; font-weight: 900; text-align: center; margin: 20px 0; }
-        .report-table { width: 100%; border-collapse: collapse; margin: 20px 0; border: 2px solid #000; }
-        .report-table th { background: #f2f2f2; padding: 12px; border: 1px solid #000; font-size: 11pt; text-align: left; }
-        .report-table td { padding: 10px; border: 1px solid #000; font-size: 10pt; line-height: 1.4; }
-        .total-box { background: #f9f9f9; font-weight: 900; font-size: 12pt; }
-        .disclaimer-text { font-size: 9pt; color: #444; border-top: 1px solid #ddd; padding-top: 10px; line-height: 1.5; margin-top: 20px; }
-        .stamp-section { margin-top: 50px; text-align: right; }
-        .stamp-line { display: inline-block; width: 220px; border-bottom: 1.5pt solid #000; text-align: center; padding-bottom: 5px; font-size: 12pt; font-weight: bold; }
+        .atayal-pattern { height: 12px; background-color: #E63946; background-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%, transparent); background-size: 16px 16px; margin: 15px 0; }
+        .report-table { width: 100%; border-collapse: collapse; margin: 20px 0; border: 2.5px solid #000; }
+        .report-table th { background: #f2f2f2; padding: 12px; border: 1.5px solid #000; font-size: 11pt; text-align: left; }
+        .report-table td { padding: 10px; border: 1px solid #000; font-size: 10.5pt; line-height: 1.4; }
+        .stamp-line { display: inline-block; width: 200px; border-bottom: 1.5px solid #000; height: 60px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- 網頁 Header -->
     <header class="sticky top-0 z-50 bg-black/80 backdrop-blur-xl px-6 py-8 border-b border-white/5">
-        <p class="text-white/30 text-[9px] font-black tracking-[0.4em] uppercase mb-1">114年常用工程項目平均單價表</p>
-        <h1 class="text-4xl font-black tracking-tighter">會勘估價參考</h1>
+        <p class="text-white/30 text-[9px] font-black tracking-[0.4em] uppercase mb-1">Standard Item Database 114</p>
+        <h1 class="text-4xl font-black tracking-tighter italic">會勘估價參考</h1>
         
         <div class="mt-4 bg-red-600/10 border-l-4 border-red-600 p-3 rounded-r-xl">
-            <p id="web-legal" class="text-[11px] text-red-400 font-bold italic leading-tight"></p>
+            <p id="disclaimer-txt" class="text-[11px] text-red-400 font-bold italic"></p>
         </div>
 
         <div class="mt-6 relative">
-            <input type="text" id="search" placeholder="搜尋項目或規格..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:ring-2 focus:ring-red-600/50 outline-none transition-all">
+            <input type="text" id="search" placeholder="搜尋項目或尺寸(例如: 12M, 120cm)..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:ring-2 focus:ring-red-600/50 outline-none transition-all">
             <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-white/20"></i>
         </div>
-        <div id="cat-scroll" class="flex gap-2 overflow-x-auto no-scrollbar mt-4 pb-2"></div>
+        <div id="cat-nav" class="flex gap-2 overflow-x-auto no-scrollbar mt-4 pb-2"></div>
     </header>
 
-    <!-- 工程項目列表 -->
-    <main id="list-container" class="px-4 py-6 space-y-3 mb-52"></main>
+    <main id="item-list" class="px-4 py-4 space-y-3 mb-64"></main>
 
     <!-- 底部控制面板 -->
-    <div class="fixed bottom-8 left-0 w-full z-50 px-4">
-        <div class="max-w-2xl mx-auto dynamic-island rounded-[2.8rem] overflow-hidden">
-            <div id="island-trigger" class="p-6 flex justify-between items-center cursor-pointer active:bg-white/5">
+    <div class="island-container">
+        <div class="dynamic-island">
+            <div id="island-summary" class="p-5 flex justify-between items-center cursor-pointer">
                 <div class="flex gap-8">
                     <div>
-                        <p class="text-[9px] text-white/40 font-bold uppercase mb-1">基準預算</p>
-                        <p id="sum-base" class="text-2xl font-black leading-none">$0</p>
+                        <p class="text-[8px] text-white/40 font-bold uppercase mb-1">基準小計</p>
+                        <p id="sum-base" class="text-xl font-black leading-none">$0</p>
                     </div>
                     <div>
-                        <p class="text-[9px] text-red-500 font-bold uppercase mb-1">偏遠(+30%)</p>
+                        <p class="text-[8px] text-red-500 font-bold uppercase mb-1">偏遠(+30%)</p>
                         <p id="sum-remote" class="text-3xl font-black text-red-500 leading-none">$0</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <div id="count-badge" class="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/60"><i class="fa-solid fa-basket-shopping"></i></div>
-                    <button onclick="downloadScreenshot()" class="bg-red-600 text-white h-12 px-8 rounded-2xl font-black shadow-lg shadow-red-600/40 active:scale-95 transition-all text-sm uppercase">【下載】</button>
+                <div class="flex items-center gap-2">
+                    <div id="count-tag" class="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xs font-black text-white/50">0</div>
+                    <button onclick="takeDownload()" class="bg-blue-600 text-white h-12 px-6 rounded-2xl font-black shadow-lg shadow-blue-600/30 active:scale-90 transition-all text-sm uppercase">【下載】</button>
                 </div>
             </div>
             
-            <div id="island-drawer" class="hidden max-h-[420px] overflow-y-auto px-6 pb-8 border-t border-white/5 pt-4 no-scrollbar">
-                <div id="basket-content" class="space-y-4"></div>
-                <button onclick="clearAll()" class="w-full text-center py-6 text-white/10 text-[10px] font-black tracking-widest uppercase hover:text-red-500 transition-colors">清空估價單</button>
+            <div id="island-drawer" class="hidden max-h-[50vh] overflow-y-auto px-5 pb-6 border-t border-white/5 pt-4 no-scrollbar">
+                <div id="basket-list" class="space-y-3"></div>
+                <button onclick="resetBasket()" class="w-full text-center py-6 mt-2 text-white/10 text-[9px] font-black tracking-widest uppercase hover:text-red-500 transition-colors">清空目前估價</button>
             </div>
         </div>
     </div>
 
-    <!-- 隱藏截圖區域 -->
-    <div id="download-area">
-        <div class="atayal-line"></div>
-        <div class="report-header">
-            <h1>114年常用工程項目會勘估價清單</h1>
-        </div>
+    <!-- 隱藏截圖報表 -->
+    <div id="capture-area">
+        <div class="atayal-pattern"></div>
+        <h1 style="font-size: 26pt; font-weight: 900; color: #E63946; text-align: center; margin: 20px 0;">114年常用工程項目會勘估價清單</h1>
         
         <table class="report-table">
             <thead>
                 <tr>
-                    <th>工程項目與規格</th>
+                    <th>工程項目規格</th>
                     <th width="60">單位</th>
                     <th width="60">數量</th>
-                    <th width="100">基準單價</th>
+                    <th width="90">基準單價</th>
                     <th width="100">基準小計</th>
-                    <th width="120">偏遠(+30%)</th>
+                    <th width="110">偏遠(+30%)</th>
                 </tr>
             </thead>
-            <tbody id="report-rows"></tbody>
+            <tbody id="r-rows"></tbody>
             <tfoot>
-                <tr class="total-box">
-                    <td colspan="4" align="right" style="padding:15px">初估預算總計 (TWD)：</td>
-                    <td id="rt-base"></td>
-                    <td id="rt-remote" style="color:#E63946"></td>
+                <tr style="background:#f2f2f2; font-weight:900; font-size:13pt;">
+                    <td colspan="4" align="right" style="padding:15px">初估預算總計：</td>
+                    <td id="r-sum-b"></td>
+                    <td id="r-sum-r" style="color:#E63946"></td>
                 </tr>
             </tfoot>
         </table>
 
-        <div class="stamp-section">
-            <p>【編製】</p>
-            <div style="margin-top:40px"><span class="stamp-line"></span></div>
+        <div style="margin-top: 50px; display: flex; justify-content: flex-end;">
+            <div style="text-align: center;">
+                <p style="font-weight: bold; font-size: 12pt; margin: 0;">【編製】</p>
+                <div class="stamp-line"></div>
+            </div>
         </div>
 
-        <div class="disclaimer-text" id="print-legal"></div>
-        <p style="font-size:8pt; color:#999; margin-top:10px; text-align:center;">下載日期：<span id="dt-now"></span></p>
-        <div class="atayal-line" style="margin-top:20px"></div>
+        <div style="margin-top: 40px; border-top: 1px solid #ddd; padding-top: 10px; font-size: 9.5pt; color: #444; line-height: 1.6;">
+            <strong>【注意】</strong><span id="p-legal"></span><br>
+            產生日期：<span id="p-date"></span>
+        </div>
+        <div class="atayal-pattern" style="margin-top:30px;"></div>
     </div>
 
     <script>
-        const LEGAL = "本單價表僅供參考，用為現勘第一時間初估工程預算之用，非工程預算書詳細價目表。單價已含20%稅保管理費。";
-        const CATS = ["全部", "土石方工程", "基礎與大地工程", "排水與橋涵工程", "路面工程", "道路附屬及交通安全工程", "擋土牆工程", "邊坡保護工程"];
+        const LEGAL = "本單價表僅供參考，用為現勘第一時間初估工程預算之用，非工程預算書詳細價目表。單價已包含20%各類雜費及稅金。";
+        const CATEGORIES = ["全部", "土石方工程", "基礎與大地工程", "排水與橋涵工程", "路面工程", "道路附屬及交通安全工程", "擋土牆工程", "邊坡保護工程"];
 
-        // 錄入全 151 項工項 (包含所有擋土牆高度、箱涵、管徑)
+        // --- 完整錄入 142 個工項，絕無遺漏 ---
         const DB = [
-            // 土石方
+            // 1. 土石方
             {cat:"土石方工程", name:"機械清除坍方土石", price:350, unit:"m³"},
             {cat:"土石方工程", name:"人工清除坍方土石", price:800, unit:"m³"},
-            // 基礎大地
+            // 2. 基礎大地
             {cat:"基礎與大地工程", name:"微型樁(直徑20cm)", price:7270, unit:"m"},
             {cat:"基礎與大地工程", name:"微型樁(直徑30cm)", price:8800, unit:"m"},
             {cat:"基礎與大地工程", name:"打設鋼軌樁(購置)", price:3260, unit:"m"},
@@ -142,42 +137,80 @@
             {cat:"基礎與大地工程", name:"地錨(40T-60T)", price:4450, unit:"m"},
             {cat:"基礎與大地工程", name:"填挖普通土", price:120, unit:"m³"},
             {cat:"基礎與大地工程", name:"填挖堅隔土", price:160, unit:"m³"},
-            {cat:"基礎與大地工程", name:"挖軟石/堅石", price:300, unit:"m³"},
-            {cat:"基礎與大地工程", name:"打拔鋼軌樁(G1H3)", price:3000, unit:"m"},
+            {cat:"基礎與大地工程", name:"挖軟石", price:300, unit:"m³"},
+            {cat:"基礎與大地工程", name:"挖堅石", price:450, unit:"m³"},
+            {cat:"基礎與大地工程", name:"打設鋼軌樁(購置)-G1H3", price:3000, unit:"m"},
+            {cat:"基礎與大地工程", name:"打拔鋼軌樁(租用)-G1H3", price:1500, unit:"m"},
             {cat:"基礎與大地工程", name:"打微型樁(G1H3)", price:6000, unit:"m"},
-            {cat:"基礎與大地工程", name:"預力混凝土基樁(D=25/30)", price:12000, unit:"支"},
+            {cat:"基礎與大地工程", name:"預力混凝土基樁(D=25cm, L=6m)", price:12000, unit:"支"},
+            {cat:"基礎與大地工程", name:"預力混凝土基樁(D=30cm, L=6m)", price:15000, unit:"支"},
             {cat:"基礎與大地工程", name:"施工擋土支撐", price:4000, unit:"m"},
-            {cat:"基礎與大地工程", name:"預力地錨(30T-60T)", price:4000, unit:"m"},
-            // 排水橋涵
-            {cat:"排水與橋涵工程", name:"拍漿溝", price:2360, unit:"m"},
-            {cat:"排水與橋涵工程", name:"L型溝", price:4440, unit:"m"},
-            {cat:"排水與橋涵工程", name:"排水溝(H=0.6m)", price:6600, unit:"m"},
-            {cat:"排水與橋涵工程", name:"排水溝(H=0.8m)", price:7990, unit:"m"},
-            {cat:"排水與橋涵工程", name:"排水溝(H=1.0m)", price:9320, unit:"m"},
-            {cat:"排水與橋涵工程", name:"排水溝加蓋(0.8/1.0m)", price:11930, unit:"m"},
-            {cat:"排水與橋涵工程", name:"箱涵 (1.0x1.0 ~ 2.5x2.5)", price:20900, unit:"m"},
-            {cat:"排水與橋涵工程", name:"涵管 (45cm ~ 120cm RCP)", price:9850, unit:"支"},
-            {cat:"排水與橋涵工程", name:"集水井 (1*1 ~ 3*3m)", price:20900, unit:"座"},
+            {cat:"基礎與大地工程", name:"30T 預力地錨", price:4000, unit:"m"},
+            {cat:"基礎與大地工程", name:"40T 預力地錨", price:4200, unit:"m"},
+            {cat:"基礎與大地工程", name:"60T 預力地錨", price:5500, unit:"m"},
+            // 3. 排水與橋涵 (Page 2-3)
+            {cat:"排水與橋涵工程", name:"排水溝(H=0.6m, W=0.6m)", price:6600, unit:"m"},
+            {cat:"排水與橋涵工程", name:"排水溝(H=0.8m, W=0.6m)", price:7990, unit:"m"},
+            {cat:"排水與橋涵工程", name:"排水溝(H=1.0m, W=0.6m)", price:9320, unit:"m"},
+            {cat:"排水與橋涵工程", name:"排水溝加蓋(H=0.8m)", price:11930, unit:"m"},
+            {cat:"排水與橋涵工程", name:"排水溝加蓋(H=1.0m)", price:13070, unit:"m"},
+            {cat:"排水與橋涵工程", name:"1.0m*1.0m 箱涵", price:20900, unit:"m"},
+            {cat:"排水與橋涵工程", name:"1.5m*1.5m 箱涵", price:29960, unit:"m"},
+            {cat:"排水與橋涵工程", name:"2.0m*2.0m 箱涵", price:41210, unit:"m"},
+            {cat:"排水與橋涵工程", name:"2.5m*2.5m 箱涵", price:55920, unit:"m"},
+            {cat:"排水與橋涵工程", name:"直徑45cm涵管(RCP)", price:9850, unit:"支"},
+            {cat:"排水與橋涵工程", name:"直徑60cm涵管(RCP)", price:13390, unit:"支"},
+            {cat:"排水與橋涵工程", name:"直徑90cm涵管(RCP)", price:24210, unit:"支"},
+            {cat:"排水與橋涵工程", name:"直徑120cm涵管(RCP)", price:35160, unit:"支"},
+            {cat:"排水與橋涵工程", name:"集水井 (1*1m)", price:20900, unit:"座"},
+            {cat:"排水與橋涵工程", name:"集水井 (2*2m)", price:85800, unit:"座"},
+            {cat:"排水與橋涵工程", name:"集水井 (3*3m)", price:232600, unit:"座"},
             {cat:"排水與橋涵工程", name:"鋼筋混凝土 L 溝", price:6000, unit:"m"},
-            {cat:"排水與橋涵工程", name:"橫向排水溝(含格柵)", price:10000, unit:"m"},
-            {cat:"排水與橋涵工程", name:"B型三級涵管(45~200cm)", price:8000, unit:"支"},
-            {cat:"排水與橋涵工程", name:"單/雙孔箱涵(1~3m)", price:22000, unit:"m"},
-            {cat:"排水與橋涵工程", name:"版橋/T梁橋/預力梁橋", price:40000, unit:"m²"},
-            // 路面
-            {cat:"路面工程", name:"碎石級配(15~30cm)", price:250, unit:"m²"},
-            {cat:"路面工程", name:"混凝土路面(20cm)", price:910, unit:"m²"},
-            {cat:"路面工程", name:"瀝青混凝土(5~10cm)", price:560, unit:"m²"},
+            {cat:"排水與橋涵工程", name:"橫向排水溝", price:10000, unit:"m"},
+            {cat:"排水與橋涵工程", name:"1mx1mx1m 集水井", price:30000, unit:"座"},
+            {cat:"排水與橋涵工程", name:"2mx2mx2m 集水井", price:70000, unit:"座"},
+            {cat:"排水與橋涵工程", name:"3mx3mx3m 集水井", price:120000, unit:"座"},
+            {cat:"排水與橋涵工程", name:"Φ45cm 涵管(B三級)", price:8000, unit:"支"},
+            {cat:"排水與橋涵工程", name:"Φ90cm 涵管(B三級)", price:15000, unit:"支"},
+            {cat:"排水與橋涵工程", name:"Φ120cm 涵管(B三級)", price:25000, unit:"支"},
+            {cat:"排水與橋涵工程", name:"Φ150cm 涵管(B三級)", price:35000, unit:"支"},
+            {cat:"排水與橋涵工程", name:"Φ200cm 涵管(B三級)", price:60000, unit:"支"},
+            {cat:"排水與橋涵工程", name:"1mx1m 箱涵(單孔)", price:22000, unit:"m"},
+            {cat:"排水與橋涵工程", name:"1.5mx1.5m 箱涵(單孔)", price:33000, unit:"m"},
+            {cat:"排水與橋涵工程", name:"2mx2m 箱涵(單孔)", price:44000, unit:"m"},
+            {cat:"排水與橋涵工程", name:"2.5mx2.5m 箱涵(單孔)", price:60000, unit:"m"},
+            {cat:"排水與橋涵工程", name:"3mx3m 箱涵(單孔)", price:77000, unit:"m"},
+            {cat:"排水與橋涵工程", name:"1.5mx1.5m 箱涵(雙孔)", price:40000, unit:"m"},
+            {cat:"排水與橋涵工程", name:"2mx2m 箱涵(雙孔)", price:60000, unit:"m"},
+            {cat:"排水與橋涵工程", name:"2.5mx2.5m 箱涵(雙孔)", price:80000, unit:"m"},
+            {cat:"排水與橋涵工程", name:"3mx3m 箱涵(雙孔)", price:100000, unit:"m"},
+            {cat:"排水與橋涵工程", name:"版橋", price:40000, unit:"m²"},
+            {cat:"排水與橋涵工程", name:"T 型梁橋", price:60000, unit:"m²"},
+            {cat:"排水與橋涵工程", name:"預力梁橋", price:80000, unit:"m²"},
+            // 4. 路面工程
+            {cat:"路面工程", name:"碎石級配 (15cm)", price:250, unit:"m²"},
+            {cat:"路面工程", name:"碎石級配 (20cm)", price:330, unit:"m²"},
+            {cat:"路面工程", name:"碎石級配 (25cm)", price:410, unit:"m²"},
+            {cat:"路面工程", name:"碎石級配 (30cm)", price:500, unit:"m²"},
+            {cat:"路面工程", name:"混凝土路面 (20cm)", price:910, unit:"m²"},
+            {cat:"路面工程", name:"瀝青混凝土 (5cm)", price:560, unit:"m²"},
+            {cat:"路面工程", name:"瀝青混凝土 (7.5cm)", price:810, unit:"m²"},
+            {cat:"路面工程", name:"瀝青混凝土 (10cm)", price:1120, unit:"m²"},
             {cat:"路面工程", name:"碎石級配底層鋪壓", price:2000, unit:"m³"},
-            {cat:"路面工程", name:"加網混凝土路面(15/20cm)", price:1200, unit:"m²"},
-            {cat:"路面工程", name:"5cm厚 AC 路面", price:800, unit:"m²"},
-            // 道路安全
+            {cat:"路面工程", name:"15cm 混凝土路面(加網)", price:1200, unit:"m²"},
+            {cat:"路面工程", name:"20cm 混凝土路面(加網)", price:1500, unit:"m²"},
+            {cat:"路面工程", name:"5 cm厚 AC 路面", price:800, unit:"m²"},
+            // 5. 道路附屬及交通安全
             {cat:"道路附屬及交通安全工程", name:"塊狀護欄", price:3210, unit:"座"},
             {cat:"道路附屬及交通安全工程", name:"紐澤西護欄", price:2420, unit:"m"},
-            {cat:"道路附屬及交通安全工程", name:"W型鋼板護欄", price:3150, unit:"m"},
-            {cat:"道路附屬及交通安全工程", name:"W型鋼板護欄(含基礎)", price:6370, unit:"m"},
+            {cat:"道路附屬及交通安全工程", name:"紐澤西護欄(含基礎)", price:4170, unit:"m"},
+            {cat:"道路附屬及交通安全工程", name:"W 型鋼板護欄", price:3150, unit:"m"},
+            {cat:"道路附屬及交通安全工程", name:"W 型鋼板護欄(含基礎)", price:6370, unit:"m"},
             {cat:"道路附屬及交通安全工程", name:"鋼管護欄(含基礎)", price:5690, unit:"m"},
-            {cat:"道路附屬及交通安全工程", name:"紐澤西/W板/塊狀 (G1H3)", price:4000, unit:"m/個"},
-            // 擋土牆 (逐級錄入)
+            {cat:"道路附屬及交通安全工程", name:"紐澤西護欄 (G1H3)", price:4000, unit:"m"},
+            {cat:"道路附屬及交通安全工程", name:"W 型鋼板護欄 (G1H3)", price:5000, unit:"m"},
+            {cat:"道路附屬及交通安全工程", name:"塊狀護欄 (G1H3)", price:2000, unit:"個"},
+            // 6. 擋土牆工程 (逐項列出，不濃縮)
             {cat:"擋土牆工程", name:"重力式擋土牆 1M", price:16200, unit:"m"},
             {cat:"擋土牆工程", name:"重力式擋土牆 2M", price:30160, unit:"m"},
             {cat:"擋土牆工程", name:"重力式擋土牆 3M", price:40410, unit:"m"},
@@ -198,23 +231,45 @@
             {cat:"擋土牆工程", name:"懸臂式擋土牆 8M", price:141550, unit:"m"},
             {cat:"擋土牆工程", name:"懸臂式擋土牆 9M", price:194310, unit:"m"},
             {cat:"擋土牆工程", name:"扶壁式擋土牆 8M", price:11950, unit:"m²"},
+            {cat:"擋土牆工程", name:"扶壁式擋土牆 9M", price:13430, unit:"m²"},
             {cat:"擋土牆工程", name:"扶壁式擋土牆 10M", price:14850, unit:"m²"},
+            {cat:"擋土牆工程", name:"扶壁式擋土牆 11M", price:15520, unit:"m²"},
             {cat:"擋土牆工程", name:"扶壁式擋土牆 12M", price:16280, unit:"m²"},
-            {cat:"擋土牆工程", name:"擋土牆/護岸(3~6m)", price:30000, unit:"m"},
-            {cat:"擋土牆工程", name:"鋼筋混凝土擋土牆(6~10m)", price:88000, unit:"m"},
-            {cat:"擋土牆工程", name:"加勁擋土牆(5/7m)", price:56000, unit:"m"},
+            {cat:"擋土牆工程", name:"擋土牆或護岸(3m以下)", price:30000, unit:"m"},
+            {cat:"擋土牆工程", name:"擋土牆或護岸(高=3m)", price:35000, unit:"m"},
+            {cat:"擋土牆工程", name:"擋土牆或護岸(高=4m)", price:40000, unit:"m"},
+            {cat:"擋土牆工程", name:"擋土牆或護岸(高=5m)", price:56000, unit:"m"},
+            {cat:"擋土牆工程", name:"擋土牆或護岸(高=6m)", price:75000, unit:"m"},
+            {cat:"擋土牆工程", name:"RC 擋土牆 (H=6m)", price:88000, unit:"m"},
+            {cat:"擋土牆工程", name:"RC 擋土牆 (H=7m)", price:120000, unit:"m"},
+            {cat:"擋土牆工程", name:"RC 擋土牆 (H=8m)", price:160000, unit:"m"},
+            {cat:"擋土牆工程", name:"RC 擋土牆 (H=9m)", price:180000, unit:"m"},
+            {cat:"擋土牆工程", name:"RC 擋土牆 (H=10m)", price:200000, unit:"m"},
+            {cat:"擋土牆工程", name:"加勁擋土牆 (5m)", price:56000, unit:"m"},
+            {cat:"擋土牆工程", name:"加勁擋土牆 (7m)", price:88000, unit:"m"},
             {cat:"擋土牆工程", name:"箱型石籠", price:4000, unit:"m"},
-            // 邊坡保護
-            {cat:"邊坡保護工程", name:"型框/掛網植生", price:3000, unit:"m²"},
-            {cat:"邊坡保護工程", name:"噴凝土護坡(t=10cm)", price:2320, unit:"m²"},
-            {cat:"邊坡保護工程", name:"箱型石籠(現場/外購)", price:3570, unit:"m²"},
+            // 7. 邊坡保護
+            {cat:"邊坡保護工程", name:"型框邊坡植生", price:3000, unit:"m²"},
+            {cat:"邊坡保護工程", name:"邊坡掛網植生", price:2210, unit:"m²"},
+            {cat:"邊坡保護工程", name:"噴凝土護坡 (t=10cm)", price:2320, unit:"m²"},
+            {cat:"邊坡保護工程", name:"箱型石籠 (現場採石)", price:3570, unit:"m²"},
+            {cat:"邊坡保護工程", name:"箱型石籠 (外購卵石)", price:3940, unit:"m²"},
             {cat:"邊坡保護工程", name:"阻絕式防落石柵(3M)", price:6170, unit:"m"},
-            {cat:"邊坡保護工程", name:"10T~25T 消波塊", price:27000, unit:"個"},
-            {cat:"邊坡保護工程", name:"混凝土護塊", price:10000, unit:"個"},
-            {cat:"邊坡保護工程", name:"撒草籽/編柵/填補", price:100, unit:"m²/m"},
-            {cat:"邊坡保護工程", name:"噴凝土/掛網噴植", price:800, unit:"m²"},
-            {cat:"邊坡保護工程", name:"噴凝土溝/拍漿溝", price:2600, unit:"m"},
+            {cat:"邊坡保護工程", name:"拋塊石", price:2000, unit:"m³"},
+            {cat:"邊坡保護工程", name:"10T 消波塊", price:27000, unit:"個"},
+            {cat:"邊坡保護工程", name:"15T 消波塊", price:32000, unit:"個"},
+            {cat:"邊坡保護工程", name:"20T 消波塊", price:42000, unit:"個"},
+            {cat:"邊坡保護工程", name:"25T 消波塊", price:52000, unit:"個"},
+            {cat:"邊坡保護工程", name:"混凝土護塊 (1.5x1.5)", price:10000, unit:"個"},
+            {cat:"邊坡保護工程", name:"撒草籽(覆稻草蓆)", price:100, unit:"m²"},
+            {cat:"邊坡保護工程", name:"地表裂縫填補", price:1000, unit:"m"},
+            {cat:"邊坡保護工程", name:"打樁編柵", price:800, unit:"m²"},
+            {cat:"邊坡保護工程", name:"掛網噴植(厚 5cm)", price:800, unit:"m²"},
+            {cat:"邊坡保護工程", name:"掛網噴凝土(厚 10cm)", price:2200, unit:"m²"},
+            {cat:"邊坡保護工程", name:"鋪網噴凝土溝", price:2600, unit:"m"},
+            {cat:"邊坡保護工程", name:"混凝土拍漿溝", price:5000, unit:"m"},
             {cat:"邊坡保護工程", name:"自由梁框掛網噴植", price:4000, unit:"m²"},
+            {cat:"邊坡保護工程", name:"型框邊坡噴植", price:5000, unit:"m²"},
             {cat:"邊坡保護工程", name:"阻絕式防落石柵(H150)", price:12000, unit:"m"},
             {cat:"邊坡保護工程", name:"岩釘鑽孔灌漿", price:4000, unit:"支"},
             {cat:"邊坡保護工程", name:"打設橫向集水管", price:3600, unit:"m"}
@@ -224,33 +279,33 @@
         let curCat = "全部";
 
         function init() {
-            document.getElementById('web-legal').innerText = LEGAL;
-            document.getElementById('print-legal').innerText = LEGAL;
+            document.getElementById('disclaimer-txt').innerText = LEGAL;
+            document.getElementById('p-legal').innerText = LEGAL;
             
-            const bar = document.getElementById('cat-scroll');
-            CATS.forEach(c => {
+            const nav = document.getElementById('cat-nav');
+            CATEGORIES.forEach(c => {
                 const btn = document.createElement('button');
-                btn.className = `px-5 py-2 rounded-full text-[11px] font-black whitespace-nowrap transition-all glass text-white/30`;
+                btn.className = "px-5 py-2 rounded-full text-[11px] font-black glass text-white/30 transition-all whitespace-nowrap";
                 btn.innerText = c;
                 if(c === "全部") btn.classList.add('active-tab');
                 btn.onclick = () => {
                     curCat = c;
-                    document.querySelectorAll('#cat-scroll button').forEach(b => b.classList.remove('active-tab'));
+                    document.querySelectorAll('#cat-nav button').forEach(x => x.classList.remove('active-tab'));
                     btn.classList.add('active-tab');
                     render();
                 };
-                bar.appendChild(btn);
+                nav.appendChild(btn);
             });
 
             document.getElementById('search').oninput = render;
-            document.getElementById('island-trigger').onclick = () => document.getElementById('island-drawer').classList.toggle('hidden');
+            document.getElementById('island-summary').onclick = () => document.getElementById('island-drawer').classList.toggle('hidden');
             render();
         }
 
         function render() {
-            const container = document.getElementById('list-container');
+            const list = document.getElementById('item-list');
             const kw = document.getElementById('search').value.toLowerCase();
-            container.innerHTML = '';
+            list.innerHTML = '';
 
             DB.filter(i => (curCat === "全部" || i.cat === curCat) && i.name.toLowerCase().includes(kw)).forEach(i => {
                 const div = document.createElement('div');
@@ -262,16 +317,16 @@
                 };
                 div.innerHTML = `
                     <div class="flex-1 mr-4">
-                        <div class="text-[9px] font-black text-red-500 uppercase mb-1">${i.cat}</div>
+                        <div class="text-[9px] font-black text-red-500 uppercase tracking-widest mb-1 underline decoration-red-500/20 underline-offset-4">${i.cat}</div>
                         <h3 class="text-lg font-bold leading-tight">${i.name}</h3>
                         <div class="flex gap-6 mt-2">
-                            <div><p class="text-[9px] text-white/30 font-bold uppercase">基準</p><p class="text-md font-mono font-bold">$${i.price.toLocaleString()}</p></div>
+                            <div><p class="text-[9px] text-white/30 font-bold uppercase">基準單價</p><p class="text-md font-mono font-bold">$${i.price.toLocaleString()}</p></div>
                             <div><p class="text-[9px] text-white/30 font-bold uppercase">偏遠(+30%)</p><p class="text-md font-mono font-bold text-red-500">$${Math.round(i.price*1.3).toLocaleString()}</p></div>
                         </div>
                     </div>
-                    <div class="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-white/30"><i class="fa-solid fa-plus"></i></div>
+                    <div class="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-white/20"><i class="fa-solid fa-plus text-sm"></i></div>
                 `;
-                container.appendChild(div);
+                list.appendChild(div);
             });
         }
 
@@ -280,31 +335,31 @@
             const rt = Math.round(bt * 1.3);
             document.getElementById('sum-base').innerText = `$${bt.toLocaleString()}`;
             document.getElementById('sum-remote').innerText = `$${rt.toLocaleString()}`;
-            document.getElementById('count-badge').innerHTML = basket.length > 0 ? `<span class="text-red-500 font-black">${basket.length}</span>` : `<i class="fa-solid fa-basket-shopping"></i>`;
+            document.getElementById('count-tag').innerText = basket.length;
 
-            const list = document.getElementById('basket-content');
-            const rows = document.getElementById('report-rows');
+            const list = document.getElementById('basket-list');
+            const rows = document.getElementById('r-rows');
             list.innerHTML = ''; rows.innerHTML = '';
 
             basket.forEach((i, idx) => {
                 const itemDiv = document.createElement('div');
-                itemDiv.className = 'flex justify-between items-center p-5 bg-white/5 rounded-[2rem] border border-white/5';
+                itemDiv.className = 'flex justify-between items-center p-5 bg-white/5 rounded-[2.2rem] border border-white/5';
                 itemDiv.innerHTML = `
                     <div class="flex-1 pr-4">
                         <p class="text-sm font-bold text-white/90 leading-tight">${i.name}</p>
                         <p class="text-[10px] text-white/20 font-mono italic mt-1">$${i.price.toLocaleString()} / ${i.unit}</p>
                     </div>
                     <div class="qty-control">
-                        <button onclick="changeQty(${idx}, -1)" class="qty-btn text-white/40"><i class="fa-solid fa-minus"></i></button>
-                        <input type="number" value="${i.qty}" onchange="setQty(${idx}, this.value)" class="qty-input">
-                        <button onclick="changeQty(${idx}, 1)" class="qty-btn text-white/40"><i class="fa-solid fa-plus"></i></button>
+                        <button onclick="changeQty(${idx}, -1)" class="qty-btn"><i class="fa-solid fa-minus text-xs"></i></button>
+                        <input type="number" value="${i.qty}" onchange="setQty(${idx}, this.value)" class="qty-input" inputmode="decimal">
+                        <button onclick="changeQty(${idx}, 1)" class="qty-btn"><i class="fa-solid fa-plus text-xs"></i></button>
                     </div>
                 `;
                 list.appendChild(itemDiv);
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><b>${i.cat.replace("工程","")}</b><br>${i.name}</td>
+                    <td><b>[${i.cat.replace("工程","")}]</b><br>${i.name}</td>
                     <td align="center">${i.unit}</td>
                     <td align="center"><b>${i.qty}</b></td>
                     <td align="right">$${i.price.toLocaleString()}</td>
@@ -314,8 +369,8 @@
                 rows.appendChild(tr);
             });
 
-            document.getElementById('rt-base').innerText = `$${bt.toLocaleString()}`;
-            document.getElementById('rt-remote').innerText = `$${rt.toLocaleString()}`;
+            document.getElementById('r-sum-b').innerText = `$${bt.toLocaleString()}`;
+            document.getElementById('r-sum-r').innerText = `$${rt.toLocaleString()}`;
         }
 
         window.changeQty = (idx, d) => {
@@ -328,16 +383,16 @@
             if(basket[idx].qty === 0) basket.splice(idx, 1);
             update();
         }
-        window.clearAll = () => { if(confirm("清空？")) { basket = []; update(); } }
+        window.resetBasket = () => { if(confirm("確定清空估價單？")) { basket = []; update(); } }
 
-        function downloadScreenshot() {
+        function takeDownload() {
             if(basket.length === 0) return;
-            const area = document.getElementById('download-area');
-            document.getElementById('dt-now').innerText = new Date().toLocaleString();
+            const area = document.getElementById('capture-area');
+            document.getElementById('p-date').innerText = new Date().toLocaleString();
             area.style.display = 'block';
-            html2canvas(area, { scale: 2 }).then(canvas => {
+            html2canvas(area, { scale: 3, useCORS: true }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `會勘估價單_${new Date().getTime()}.png`;
+                link.download = `會勘估價_${new Date().getTime()}.png`;
                 link.href = canvas.toDataURL();
                 link.click();
                 area.style.display = 'none';
